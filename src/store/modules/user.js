@@ -4,11 +4,12 @@ import { request } from "@/utils";
 const userStore = createSlice({
   name: "user",
   initialState: {
-    token: "",
+    token: localStorage.getItem("TOKEN") || "",
   },
   reducers: {
     setToken: (state, action) => {
       state.token = action.payload;
+      localStorage.setItem('TOKEN',action.payload)
     },
   },
 });
