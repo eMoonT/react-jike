@@ -16,6 +16,7 @@ import "react-quill/dist/quill.snow.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { createArticleApi, getChannelsApi } from "../../apis/article";
+import { message } from "antd";
 
 const { Option } = Select;
 
@@ -30,18 +31,30 @@ const Publish = () => {
   }, []);
 
   const onSubmit = (value) => {
-    const { title,content,channel_id } = value
-    console.log(value);
+    const { title, content, channel_id } = value;
+    if (imgType !== imgList.length) {
+      return message.warning("还有图片没有上传完毕");
+    }
     const reqData = {
       title,
       content,
       cover: {
-        type: 0,
-        images: [],
+        type: imgType,
+        images: imgList.map(item => item.response.data.url),
       },
-      channel_id
-    }
+      channel_id,
+    };
     createArticleApi(reqData);
+  };
+
+  const [imgList,setImgList] = useState([])
+  const onImgUpload = (value) => {
+    setImgList(value.fileList)
+  }
+
+  const [ imgType,setImgType ] = useState(0)
+  const onTypeChange = (value) => {
+    setImgType(value.target.value)
   }
 
   return (
@@ -59,7 +72,7 @@ const Publish = () => {
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 0 }}
           validateTrigger="onBlur"
           onFinish={onSubmit}
         >
@@ -82,6 +95,21 @@ const Publish = () => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+
+          <Form.Item label="封面">
+            <Form.Item name="type">
+              <Radio.Group onChange={onTypeChange}>
+                <Radio value={1}>单图</Radio>
+                <Radio value={3}>三图</Radio>
+                <Radio value={0}>无图</Radio>
+              </Radio.Group>
+            </Form.Item>
+            { imgType > 0 && <Upload className="" maxCount={imgType} action={'http://geek.itheima.net/v1_0/upload'} name="image" onChange={onImgUpload} listType="picture-card" showUploadList>
+              <div style={{ marginTop: 8 }}>
+                <PlusOutlined />
+              </div>
+            </Upload> }
           </Form.Item>
 
           <Form.Item
