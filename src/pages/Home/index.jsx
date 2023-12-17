@@ -1,7 +1,11 @@
+import BarChart from "./components/BarChart"
 
 const Home = () => {
+
   return (
-    <div>Home</div>
+    <div>
+      <BarChart title={"一周进度"}/>
+    </div>
   )
 }
 
