@@ -2,7 +2,9 @@ import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./modules/user";
 
 const store = configureStore({
-    reducer: userReducer
+    reducer: {
+        user: userReducer
+    }
 })
 
 export default store
